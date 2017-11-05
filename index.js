@@ -24,8 +24,8 @@ class MulterSharp {
       throw new Error('You have to specify project id for Google Cloud Storage to work.');
     }
 
-    if (!options.keyFilename) {
-      throw new Error('You have to specify credentials key file for Google Cloud Storage to work.');
+    if (!(options.keyFilename || options.credentials)) {
+      throw new Error('You have to specify credentials key file or credentials object for Google Cloud Storage to work.');
     }
 
     this.options = Object.assign({}, MulterSharp.defaultOptions, options || {});
@@ -36,11 +36,16 @@ class MulterSharp {
     } else {
       this.getDestination = options.destination || getDestination;
     }
-
-    this.gcStorage = gcloud({
+    const gCloudCommonOptions = {
       projectId: options.projectId,
-      keyFilename: options.keyFilename
-    });
+    };
+    const gCloudAuth = options.keyFilename ? {
+      keyFilename : options.keyFilename,
+    } : {
+      auth : options.credentials,
+    };
+    const gCloudOptions = Object.assign({}, gCloudCommonOptions, gCloudAuth);
+    this.gcStorage = gcloud(gCloudOptions);
 
     this.gcsBucket = this.gcStorage.bucket(options.bucket);
   }
