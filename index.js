@@ -42,7 +42,7 @@ class MulterSharp {
     const gCloudAuth = options.keyFilename ? {
       keyFilename : options.keyFilename,
     } : {
-      auth : options.credentials,
+      credentials : options.credentials,
     };
     const gCloudOptions = Object.assign({}, gCloudCommonOptions, gCloudAuth);
     this.gcStorage = gcloud(gCloudOptions);
